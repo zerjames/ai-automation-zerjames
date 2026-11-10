@@ -76,9 +76,3 @@ python cli.py --prompt "Tampilkan nasabah prioritas dengan saldo di atas 500 jut
 Hasil file Excel akan langsung tersimpan di folder `output/`.
 
 ---
-
-## 🛡️ Nilai Tambah untuk Interview / Portofolio:
-- **Paham Ekosistem Data Bank:** Tahu bahwa data tersimpan di RDBMS (SQL) dan harus diakses dengan permission *Read-Only*.
-- **Paham Regulasi PDP:** Tahu bahwa data NIK dan No. Rekening tidak boleh sembarangan di-export tanpa masking.
-- **Nilai Bisnis Tinggi:** Mengurangi beban tim IT/Database Administrator dari permintaan tarikan data manual harian.
-
