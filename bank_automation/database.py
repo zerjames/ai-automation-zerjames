@@ -221,13 +221,19 @@ def execute_safe_query(query: str, params: tuple = ()):
     
     if info["type"] == "MySQL":
         with conn.cursor() as cursor:
-            cursor.execute(query, params)
+            if params:
+                cursor.execute(query, params)
+            else:
+                cursor.execute(query)
             results = cursor.fetchall()
         conn.close()
         return list(results)
     else:
         cursor = conn.cursor()
-        cursor.execute(query, params)
+        if params:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
         rows = cursor.fetchall()
         results = [dict(row) for row in rows]
         conn.close()
