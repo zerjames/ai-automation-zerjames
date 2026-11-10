@@ -1,0 +1,6 @@
+# Core Banking AI Automation Requirements
+streamlit>=1.30.0
+openpyxl>=3.1.2
+pandas>=2.0.0
+faker>=20.0.0
+flask>=3.0.0
