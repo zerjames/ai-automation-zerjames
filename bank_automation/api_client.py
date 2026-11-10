@@ -68,3 +68,4 @@ def pull_from_server_and_export_excel(prompt: str, output_path: str, mask_data=T
         executed_query=sql_executed
     )
     return output_path, len(records)
+
