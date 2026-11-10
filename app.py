@@ -20,7 +20,7 @@ importlib.reload(bank_automation.validator)
 importlib.reload(bank_automation.ai_engine)
 importlib.reload(bank_automation.database)
 
-from bank_automation.database import init_database, execute_safe_query, get_connection
+from bank_automation.database import init_database, execute_safe_query, get_connection, get_active_db_info
 from bank_automation.ai_engine import natural_language_to_sql
 from bank_automation.validator import apply_masking_to_record
 from bank_automation.excel_exporter import export_customers_to_excel
@@ -277,18 +277,35 @@ with st.sidebar:
     st.markdown("<hr style='border:0; border-top:1px solid #E2E8F0; margin: 20px 0;'>", unsafe_allow_html=True)
     
     # DB Status
+    db_info = get_active_db_info()
     st.markdown(f"""
-    <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
         {SVG_DATABASE}
-        <span style="font-size:13px; font-weight:600; color:#334155;">Koneksi Core Database</span>
+        <span style="font-size:13px; font-weight:600; color:#334155;">Database Terhubung</span>
+    </div>
+    <div style="font-size:12px; font-weight:600; color:#0F172A; margin-bottom:2px;">
+        {db_info['name']}
+    </div>
+    <div style="font-size:11px; color:#64748B; margin-bottom:12px; font-family:monospace;">
+        {db_info['target']}
     </div>
     """, unsafe_allow_html=True)
     
     conn = get_connection()
-    c = conn.cursor()
-    c.execute("SELECT COUNT(*), SUM(saldo_terakhir) FROM nasabah")
-    total_db, total_dpk = c.fetchone()
-    conn.close()
+    if db_info["type"] == "MySQL":
+        with conn.cursor() as cur:
+            cur.execute("SELECT COUNT(*) as cnt, SUM(saldo_terakhir) as total_dpk FROM nasabah")
+            row = cur.fetchone()
+            total_db = row["cnt"]
+            total_dpk = row["total_dpk"] or 0
+        conn.close()
+    else:
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*), SUM(saldo_terakhir) FROM nasabah")
+        row = c.fetchone()
+        total_db = row[0]
+        total_dpk = row[1] or 0
+        conn.close()
 
     st.metric("Total Portofolio Nasabah", f"{total_db:,} Akun")
     st.metric("Total Dana Kelolaan (DPK)", f"Rp {total_dpk:,.0f}")
